@@ -1,0 +1,15 @@
+{
+  "name": "Mortix",
+  "description": "Mortix beta application",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "connect": "2.x",
+    "passport": "0.1.17",
+	"passport-local": "0.1.6",
+	"sequelize": "1.7.0-alpha2",
+	"sequelize-mysql": "1.7.0-alpha2",
+	"sha1": "1.0.1",
+	"amulet": "0.2.9"
+  }
+}
