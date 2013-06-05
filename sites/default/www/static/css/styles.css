@@ -57,8 +57,9 @@ html, body {
 }
 
 .title h1 {  
-        position: relative;  
-        font-size: 200px;  
+        position: relative;
+        float:left;  
+        font-size: 100px;  
         margin-top: 0;  
         font-family: 'Myriad-Pro', 'Myriad', helvetica, arial, sans-serif;  
         text-shadow: 2px 3px 3px #292929;  
@@ -71,7 +72,7 @@ html, body {
   
   .title  h1 a {  
         text-decoration: none;  
-        color: #ffffff;  
+        color: #185a50;  
         position: absolute;  
   
         -webkit-mask-image: -webkit-gradient(linear, left top, left bottombottom, from(rgba(0,0,0,1)), color-stop(50%, rgba(0,0,0,0)), to(rgba(0,0,0,1)));  
@@ -89,4 +90,20 @@ html, body {
         color: #dbdbdb;  
         content : attr(data-title);  
     }  
+
+ .clear{
+ 	clear: both;
+ }
+
+ .main{
+ 	padding-top: 20px;
+ }
+
+ .copyright_notice{
+ 	margin-left:auto;
+ 	margin-right:auto;
+ 	color: white;
+ 	width: 200px;
+ 	margin-top:80px;
+ }
 
