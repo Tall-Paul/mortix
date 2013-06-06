@@ -48,7 +48,7 @@ exports.handle = function(id,site,request,response){
 					passport.authenticate('local',{},function(foo,user,message){
 						if (user == false){
 							framework.parser.assign("login_message","Unable to login, please try again");
-							framework.parser.display_file(process.cwd()+"/sites/"+site+"/www/templates/common/login.html",response); 
+							framework.parser.display_file(process.cwd()+"/sites/"+site+"/www/views/login.html",response); 
 						} else {									
 							request.logIn(user, function(err) {
       							//if (err) { return next(err); }
@@ -71,6 +71,6 @@ exports.handle = function(id,site,request,response){
 			//sys.puts("parsing: "+process.cwd()+"/sites/"+site+"/www/templates/common/login.html");
 			response.writeHeader(200);
 			framework.parser.assign("login_message","Enter Credentials to login");
-			framework.parser.display_file(process.cwd()+"/sites/"+site+"/www/templates/common/login.html",response); 
+			framework.parser.display_file(process.cwd()+"/sites/"+site+"/www/views/login.html",response);  
 		}
 }

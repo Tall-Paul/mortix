@@ -1,0 +1,60 @@
+{{>static/includes/header.html}}
+	<script src="/js/jquery.validate.js"></script>
+	<script src="/js/validate.extra_methods.js"></script>
+	<div class="main">
+		<div class="login_main">
+			<div class="login_form">
+			<div class="form_row"><p>Please enter your details:</p></div>
+
+			<form  method="post" id="registration_form">
+				<div class="form_row" >
+    					<div class="form_label_container">
+        					<label class="form_label">Email Address:</label>
+        				</div>
+        				<div class="form_input_container">
+        					<input type="text" name="username" id="username"/>
+        				</div>
+    			</div>
+    			<div class="form_row">
+    				<div class="form_label_container">
+        					<label class="form_label">Password:</label>
+        			</div>
+        			<div class="form_input_container">
+        					<input type="text" name="password" id="password"/>
+        			</div>
+    			</div>
+    			<div class="form_row">
+    				<div class="form_label_container">
+        					<label class="form_label">Password (confirm):</label>
+        			</div>
+        			<div class="form_input_container">
+        					<input type="text" name="password_confirm" id="password_confirm"/>
+        			</div>
+    			</div>
+    			<div class="form_row">
+    				<div class="clear" style="padding-top:5px">
+        					<input type="submit" value="Register"/>
+        			</div>
+    			</div>
+			</form>
+		</div>	
+	</div>
+</div>
+<script>
+// just for the demos, avoids form submit
+jQuery.validator.setDefaults({
+  debug: true,
+  success: "valid"
+});
+$( "#registration_form" ).validate({
+  rules: {
+    password: "required",
+    username: "required",
+    password_confirm: {
+      equalTo: "#password"
+    }
+  }
+});
+</script>
+
+{{>static/includes/footer.html}}

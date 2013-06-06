@@ -3,18 +3,20 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/styles.css" media="screen" />
 	<title>Mortix</title>
+	<script src="/js/jquery.js"></script>
 </head>
 <body>
 <div class="wrapper">
 	<div class="header">
 		<div class="title">
-			<h1 data-title="Mortix"><a href="#"> Mortix </a> </h1> 
+			<h1 data-title="Mortix"><a href="#">Mortix</a></h1>
 		</div>
 		<div class="nav">
 			<ul class="menu">
 				<li><a href="/index.html">Home</a></li>
 				<li><a href="/privacy.html">Privacy</a></li>
-				<li><a href="/login.html">Login</a></li>
+				<li><a href="/plans.html">Pricing</a></li>
+				<li><a href="/account.html">{{#user}} Account {{/user}} {{#guest}} Login {{/guest}}</a></li>
 			</ul>
 		</div>
 		<div class="clear"></div>

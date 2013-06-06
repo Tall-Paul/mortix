@@ -1,4 +1,5 @@
 var http = require('http');
+var https = require('https');
 var sys = require('sys');
 var fs = require('fs');
 var connect = require('connect');
@@ -13,6 +14,9 @@ var models = Array;
 var parser = null;
 var router = null;
 var objects = [];
+var login_handler = "base_login";
+var https_port = "443";
+var http_port = "80";
 
 
 
@@ -32,7 +36,7 @@ var connect_to_database = function(){
 			sequelize = new Sequelize(connection.database, connection.username, connection.password,{
 				dialect: "sqlite",
 				storage: "/sites/data.db",
-				logging: true,
+				logging: false,
 			});
 		} else {
 			sys.puts("using MySql");
@@ -40,7 +44,7 @@ var connect_to_database = function(){
 			mysql = require('sequelize-mysql').mysql;
 			sequelize = new Sequelize(connection.database, connection.username, connection.password,{
 				dialect: "mysql",
-				logging: true,
+				logging: false,
 			});
 		}	
 		sys.puts("##### MODELS #####");
@@ -76,13 +80,14 @@ var sync_package_models = function(package){
 	fs.readdir(model_dir, function(err, files) {
 		if (err) return;
 		files.forEach(function(file){
-			if (file != "model_associations.js")
+			if (file != "initialise.js")
 				sync_model(model_dir+"/"+file,package+"_"+file.substring(0,file.length - 3));
 		});
 		try{
-			require(model_dir+"/model_associations.js");
+			require(model_dir+"/initialise.js");
 		} catch (err) {
 			//no model_associations in this package
+			sys.puts("no initialise for "+package);
 		}
 
 	});
@@ -116,7 +121,8 @@ var cache_package_objects = function(package){
 
 var do_common_assign = function(){
 	parser.assign("js_includes","<script src='http://code.jquery.com/jquery-1.9.1.min.js'></script><script src='/js/framework.js'></script>");
-	
+	parser.assign("user",false);
+	parser.assign("guest",true);
 	parser.assign("framework_get_object_ajax",function(obj,id,prefix){
 			return client_get_object_ajax(obj,id,prefix);				
 	});
@@ -141,15 +147,39 @@ var client_get_object = function(obj,id,prefix){
 	return " ";
 }
 
+var setLoginHandler = function(new_handler){
+	login_handler = new_handler;
+}
+
 var isLoggedIn = function(id,site,request,response){
 	if (!request.isAuthenticated()){
-		sys.puts("USER IS NOT LOGGED IN");
-		router.call_handler(id-1,site,"base_login",request,response);
+
+		sys.puts("USER IS NOT LOGGED IN via "+login_handler);
+		router.call_handler(id-1,site,login_handler,request,response);
 		return false;
 	} else {
 		sys.puts("USER IS LOGGED IN");
 		return true;
 	}
+}
+
+
+var require_secure = function(request,response){
+	if(!request.connection.encrypted) {
+		if (https_port == "443")
+			port = "";
+		else 
+			port = ":"+https_port;
+		//remove port from current request
+		host = request.headers.host;
+		host = host.replace(":"+http_port,"");
+		response.writeHead(302, {
+  			'Location': 'https://' + host + port + request.url  
+		});
+		response.end();    	
+		return true;
+  	}
+  	return false;
 }
 
 var query_from_commas = function(text){
@@ -164,7 +194,12 @@ var query_from_commas = function(text){
  exports.client_get_object_ajax = client_get_object_ajax;
 
 
-exports.startServer =  function(port){
+exports.startServer =  function(set_http_port,set_https_port){
+
+	if (typeof set_http_port != "undefined")
+		http_port = set_http_port;
+	if (typeof set_https_port != "undefined")
+		https_port = set_https_port;
 	
 	router = new router_class(process.cwd()+"/sites");
 	parser = new parser_class();
@@ -183,9 +218,18 @@ exports.startServer =  function(port){
 	exports.parser = parser;
 	exports.router = router;
 	exports.objects = objects;
-	exports.isLoggedIn = isLoggedIn;		
+	exports.isLoggedIn = isLoggedIn;	
+	exports.setLoginHandler = setLoginHandler;	
+	exports.http_port = http_port;
+	exports.https_port = https_port;
+	exports.require_secure = require_secure;
 
-connect()
+	var https_options = {
+  		key: fs.readFileSync(process.cwd()+"/framework/key.pem"),
+  		cert: fs.readFileSync(process.cwd()+"/framework/cert.pem")
+	};
+
+app = connect()
   .use(connect.logger('tiny'))
   .use(connect.static('sites/default/www/static'))
   .use(connect.cookieParser())
@@ -194,7 +238,15 @@ connect()
   .use(passport.session())
   .use(function(req, res){
     router.handle(req,res);
-  })
- .listen(port);
-sys.puts("server started on "+port);
+  });
+
+ 
+
+  http_server = http.createServer(app).listen(http_port);
+  https_server = https.createServer(https_options,app).listen(https_port);
+
+  
+
+
+sys.puts("server started on "+http_port+" and "+https_port);
 };

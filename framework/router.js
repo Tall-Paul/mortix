@@ -135,19 +135,29 @@ router.prototype = {
 			request_path = "index.html";
 		var that = this;
 		var matched = false;
-		this.routes.forEach(function(route){
-			sys.puts("next_handler loop"+current_id+":"+route.id);
-			if (request_path.startsWith(route.startswith) && request_path.endsWith(route.endswith) && route.id > current_id){
-				sys.puts("matched "+request_path+" to "+route.handler);
-				that.call_handler(route.id,site,route.handler,request,response);
-				matched = true;
-				throw StopIteration; //break us out of the loop
+		try {
+			this.routes.forEach(function(route){
+				sys.puts("next_handler loop"+current_id+":"+route.id);
+				if (request_path.startsWith(route.startswith) && request_path.endsWith(route.endswith) && route.id > current_id){
+					sys.puts("matched "+request_path+" to "+route.handler);
+					that.call_handler(route.id,site,route.handler,request,response);
+					matched = true;
+					throw StopIteration; //break us out of the loop
+				}
+			});
+			if (matched == false){
+				sys.puts("####Hit 404####");
+				this.handle_404(request,response);
 			}
-		});
-		if (matched == false){
-			sys.puts("####Hit 404####");
-			this.handle_404(request,response);
+		} catch (err) {
+			this.handle_error(request,response,err);
 		}
+	},
+
+	handle_error: function(request,response,error){
+		response.writeHeader(500, {"Content-Type": "text/html"});
+		var template = process.cwd()+"/sites/"+request.site+"/www/views/500.html";
+		framework.parser.display_file(template,response);
 	},
 
 	handle_404: function(request,response){
@@ -164,9 +174,7 @@ router.prototype = {
 				that = this;
 				fs.readFile(full_path, "binary", function(err, file) {    
                 	 if(err) {    
-                    	response.writeHeader(500, {"Content-Type": "text/plain"});    
-                     	response.write(err + "\n");    
-                     	response.end();    
+                    	that.handle_error(request,response,err); 
 		         	}    
                  	else
 		 		 	{  
@@ -219,24 +227,12 @@ router.prototype = {
 			}
 			return;
 		}
-		var handled = false;
 		sys.puts(full_path);
 		fs.exists(full_path,function(exists){
 			if (exists){
 				that.handle_static(full_path,request,response);				  
 			} else {
-				var handled = false;
-				//routing table stuff goes here								v
-				that.routes.forEach(function(route){
-					if (request_path.startsWith(route.startswith) && request_path.endsWith(route.endswith)){	
-						handled = true;					
-						that.call_handler(route.id,request.site,route.handler,request,response);						
-						throw StopIteration;
-					}
-				});				
-				if (handled == false){
-					that.handle_404(request,response);
-				}
+				that.next_handler(0,request.site,request,response);				
 			}
 		});	
 	},
