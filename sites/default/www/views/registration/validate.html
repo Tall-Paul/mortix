@@ -1,0 +1,43 @@
+{{>static/includes/header.html}}
+<script src="/js/jquery.validate.js"></script>
+<script src="/js/validate.extra_methods.js"></script>
+<script src="/js/openpgp/openpgp.min.js"></script>
+<script src="/js/mortix.js"></script>
+<div class="main">
+		<div class="login_main">
+			<form  method="post" id="validation_form">
+				<div class="form_row" >
+    					<div class="form_label_container">
+        					<label class="form_label">Join Code:</label>
+        				</div>
+        				<div class="form_input_container">
+        					<input type="text" name="join_code" id="join_code" value="{{{joincode}}}" />
+        				</div>
+    			</div>
+    			<div class="clear"/>
+    			<div class="form_row">
+    				<p>You can either use your own, previously generated key pair with Mortix, or have us generate a keypair for you now.  Which would you prefer?</p>
+    			</div>
+    			<div class="form_row"><input type="button" id="own_keys" value="I have my own keys"/><div style="float:right"><input type="button" id="generate_keys" value="Generate keys"/></div></div>
+    			<div id="passphrase" style="display:none">
+    				
+    			</div>
+    			<div id="keys" style="display:none">
+    				<div class="form_row"><p>This is your private key. It's encrypted with your passphrase, and no-one else should ever have access to this key. We never send this key to our servers (you can check the source code for this page to verify this), we only store it locally in your browser.</p></div>
+    				<div class="form_row">
+    					<textarea class="keytext" id="private_key"></textarea>
+    				</div>
+    				<div class="form_row"><p>This is your public key.  It's not encrypted, and you're okay to share this around.  We send this to our server when you hit 'Complete registration' and from then on all data coming from our server will be encrypted using this key.  Only you, with your private key will be able to decode it.  Magic!</p></div>
+    				<div class="form_row">
+    					<textarea id="public_key" class="keytext"></textarea>
+    				</div>
+    			</div>
+    			<div class="form_row">
+    				<div class="clear" style="padding-top:5px">
+        					<input type="submit" value="Complete registration"/>
+        			</div>
+    			</div>
+			</form>
+		</div 
+</div>
+{{>static/includes/footer.html}}

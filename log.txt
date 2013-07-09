@@ -1,0 +1,9 @@
+version_string: 0.1.7
+server started on 8125 and 8126
+##### ROUTES #####
+id: [1] site: [default] startswith: [/api/register] endswith: [*] handler: [api_register] secure?: [true]
+id: [2] site: [default] startswith: [/api/] endswith: [*] handler: [api_main] secure?: [true]
+id: [3] site: [default] startswith: [/account] endswith: [*] handler: [mortix_account] secure?: [true]
+id: [4] site: [default] startswith: [/register] endswith: [*] handler: [mortix_register] secure?: [true]
+id: [5] site: [default] startswith: [/validate] endswith: [*] handler: [mortix_validate] secure?: [false]
+id: [6] site: [default] startswith: [*] endswith: [*] handler: [pages_page] secure?: [false]

@@ -1,60 +1,108 @@
-{{>static/includes/header.html}}
-	<script src="/js/jquery.validate.js"></script>
-	<script src="/js/validate.extra_methods.js"></script>
+{{>static/includes/header.html}}	
+    <script src="/js/openpgp.min.js"></script>
+    <script src="/js/mortix.js"></script>
+    <script src="/js/register.js"></script>
+    <pre id="public_key_pre" style="display:none">
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: OpenPGP.js v.1.20130420
+Comment: http://openpgpjs.org
+
+xsBNBFG53zABCADZsVmqDmxMXmyBoI/ekRC+93e912fPRxWiHNyGiE5inpJb
+VfTNwy0gvMN7zrqLqczd06gUMpP18M4hGc6qYz35srTh9rGsQcZsr23IvbjY
+KSHOyU7xN2iRDVEmI2pu5LgU0F+KZKr16/x68oxFDGOcxMFO8fnvT/Jx1MVH
+zc+39yEJ5w+pryatloMhZ+T7zVvf/p6jw5uCNlqkaAU5Fwtz001HWm/4QdIz
+FrG1piLe0xbf8qr0VTYI9UJ3SeXwIZKugOXXhCoxo+j+yweUdIRQJlDpLj3m
+/+zDaebPf93B1CCSHsDeQOs/fY2T0wiuJFprplwUiazqpaD6tYoC2jkTABEB
+AAHNE3NlcnZlckBtb3J0aXguY28udWvCwFwEEAEIABAFAlG53z0JEHSQLmvz
+i42zAADNpwgA17MCJmTQHs2c+PiVTjRpjyA7Nih0/sJOOBYoYEOPJWgbBbGT
+eojlJ1Bm8uN40SkYhSE0Sp8/0iA5anMezfjkIXwrrGJxNclWRI9qRiPv/EXv
+A2Ho44pOOKoO4s398uDjixjKGHH7LzH/lH6f3U6fESMrASNqLZXqWg/FWbdD
+LdxkmQ2FeTSu1FtFq9vvO6rZZeedUe757INiJehOixXxes3fBc6svWJaSf3Z
+zw3WNJUOwfnuFTXboWodjhMYP7CI9bN2nHAxJNQV7vpdEoy/svi/lZLES/iV
+WxZMZFfF00Gb1AZMjslBw3QsBsrJ06SQaZ2pcbsIBWj/H6iP5bQgHw==
+=83Ws
+-----END PGP PUBLIC KEY BLOCK-----
+    </pre>
 	<div class="main">
 		<div class="login_main">
-			<div class="login_form">
-			<div class="form_row"><p>Please enter your details:</p></div>
-
-			<form  method="post" id="registration_form">
+            <div class="form_row">
+                <div id="registration_message" class="info_message"></div>
+            </div>
+            <div id="registration_stuff">
 				<div class="form_row" >
     					<div class="form_label_container">
-        					<label class="form_label">Email Address:</label>
+        					<label class="form_label">User name</label>
         				</div>
         				<div class="form_input_container">
-        					<input type="text" name="username" id="username"/>
+        					<input type="text" name="username" id="username"/><button id="check_name">Check</button>
         				</div>
     			</div>
-    			<div class="form_row">
-    				<div class="form_label_container">
-        					<label class="form_label">Password:</label>
-        			</div>
-        			<div class="form_input_container">
-        					<input type="text" name="password" id="password"/>
-        			</div>
-    			</div>
-    			<div class="form_row">
-    				<div class="form_label_container">
-        					<label class="form_label">Password (confirm):</label>
-        			</div>
-        			<div class="form_input_container">
-        					<input type="text" name="password_confirm" id="password_confirm"/>
-        			</div>
-    			</div>
-    			<div class="form_row">
+                <div class="form_row">
+                    <p id="check_result"></p>
+                </div>
+
+                
+
+                <div id="key_gen_container" style="display:none">
+                     <div class="form_row">
+                        <h2>Okay, let's generate some secure keys!</h2>
+                     </div>      
+                    <div class="form_row">                     
+                            Your private key should be secured with a short (4 to 6 words) passphrase.  Try to include numbers as well as words.  You'll need to remember this, so make it something you won't forget!! Note that this is never sent to the Mortix server, if you lose it we have no way of recovering your account.
+                    </div>   
+                    <div class="form_row"> 
+                        <div class="form_label_container">
+                            <label class="form_label">PassPhrase</label>
+                        </div>
+                        <div class="form_input_container">
+                            <div class="form_input_container">
+                                <input type="password"  id="passphrase" style="width:300px"/>
+                            </div>
+                        </div>                     
+                    </div>                
+                    <div class="form_row">                     
+                            When you're ready, hit the 'generate keys' button below.  Once you do, you'll need to waggle your mouse around to generate some randomness for the key.  Just hit the button and start waggling...This could take up to 30 seconds, I'll let you know when you're done.
+                    </div> 
+                    <div class="form_row">
+                    <div class="clear" style="padding-top:5px">
+                            <button id="do_generation"/>Generate Keys</button>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="form_row public_key_rows" id="public_key_desc" style="display:none;margin-bottom:0px;margin-top:10px;">     
+                    <h2>Public Key</h2>                
+                    This is your public key.  When you hit register it'll be sent to the mortix server, and used to encrypt any messages the are sent to you.  Messages encrypted using this key can only be decrypted using the matching private key.             
+                </div> 
+                <div class="form_row public_key_rows" id="public_key_container" style="display:none">                       
+                        <div class="form_input_container">
+                            <textarea  name="public_key" id="public_key" class="key"></textarea>
+                        </div>
+                </div>
+
+                <div class="form_row private_key_rows" id="private_key_desc" style="display:none;margin-bottom:0px">                     
+                    <h2>Private Key</h2>
+                    This is your private key.  This is never, ever, ever sent to the mortix server.  Some mortix apps (including the mortix website itself) might offer to store this private ket in local storage for you, but make sure you trust an app before you give it your private key.<br/>  
+
+                    Also, if you lose this key, or its passphrase, your account is basically lost.  There's nothing we can do about it without the key.<br/> 
+
+                    <b>COPY THIS KEY AND SAVE IT SOMEWHERE VERY, VERY SAFE!!</b>   
+                </div> 
+
+                 <div class="form_row private_key_rows" id="private_key_container" style="display:none">                        
+                        <div class="form_input_container">
+                            <textarea  id="private_key" class="key"></textarea>
+                        </div>
+                </div>
+
+    			<div class="form_row" id="register_container" style="display:none">
     				<div class="clear" style="padding-top:5px">
-        					<input type="submit" value="Register"/>
+        					<button id="register_button" value="Register">Register</button>
         			</div>
     			</div>
-			</form>
 		</div>	
+       </div>
 	</div>
-</div>
-<script>
-// just for the demos, avoids form submit
-jQuery.validator.setDefaults({
-  debug: true,
-  success: "valid"
-});
-$( "#registration_form" ).validate({
-  rules: {
-    password: "required",
-    username: "required",
-    password_confirm: {
-      equalTo: "#password"
-    }
-  }
-});
-</script>
+
 
 {{>static/includes/footer.html}}

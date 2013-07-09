@@ -5,7 +5,7 @@ var http = require('http')
   , fs = require("fs");
 
 var parser = module.exports = function(){		
-	sys.puts("##### Parser initialised #####");
+	//sys.puts("##### Parser initialised #####");
 }
 
 parser.prototype = {
@@ -38,10 +38,13 @@ parser.prototype = {
 		return "<script>$(document).ready(function(){framework_load_object_ajax('"+json_string+"','"+prefix+"')});</script>";
 	},
 
-	display_file: function(filename,response){		
+	display_file: function(filename,response,wait){
+		if (typeof wait === 'undefined')
+			wait = true;
+		//sys.puts(wait);
 		this.running = 1;
 		var that = this;
-			this.renderer = mu.render(response,[filename],this.view,true,function(){
+			this.renderer = mu.render(response,[filename],this.view,wait,function(){
 				that.running = 0;	
 				that.clear();
 			});		

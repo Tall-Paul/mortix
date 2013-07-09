@@ -1,5 +1,5 @@
 var sys = require("sys");
-var fs = require("fs")
+var fs = require("fs");
 var url = require("url");
 var path = require("path");
 var framework = require(process.cwd()+'/framework/framework.js');
@@ -57,9 +57,9 @@ var inArray = function (needle, haystack) {
 }
 
 
-var router = module.exports = function(site_directory){
-	this.sitesfile = site_directory+"/sites.json";
-	this.routesfile = site_directory+"/routes.json";	
+var router = module.exports = function(){
+	this.sitesfile = "./config_files/sites.json";
+	this.routesfile = "./config_files/routes.json";	
 	this.load_routes();
 }
 
@@ -73,7 +73,7 @@ router.prototype = {
 
 	show_routes:  function(){
 		this.routes.forEach(function(route){
-			sys.puts("site: ["+route.site+"] startswith: ["+route.startswith+"] endswith: ["+route.endswith+"] handler: ["+route.handler+"]");
+			sys.puts("id: ["+route.id+"] site: ["+route.site+"] startswith: ["+route.startswith+"] endswith: ["+route.endswith+"] handler: ["+route.handler+"] secure?: ["+route.secure+"]");
 		});
 	},
 
@@ -95,6 +95,17 @@ router.prototype = {
 				return sys.puts("Unable to build routes!!");
 			}
 			that.routes = JSON.parse(data);
+			for (var i = 0; i < that.routes.length; i++) {
+				that.routes[i].id = i+1;
+				if (typeof that.routes[i].site === "undefined")
+					that.routes[i].site = "default";
+				if (typeof that.routes[i].startswith === "undefined")
+					that.routes[i].startswith = "*";
+				if (typeof that.routes[i].endswith === "undefined")
+					that.routes[i].endswith = "*";
+				if (typeof that.routes[i].secure === "undefined")
+					that.routes[i].secure = false;
+			}
 			//sys.puts("Routes Built from "+that.routesfile);
 			sys.puts("##### ROUTES #####");
 			that.show_routes();
@@ -135,27 +146,45 @@ router.prototype = {
 			request_path = "index.html";
 		var that = this;
 		var matched = false;
+		var current_handler = "";
 		try {
 			this.routes.forEach(function(route){
-				sys.puts("next_handler loop"+current_id+":"+route.id);
 				if (request_path.startsWith(route.startswith) && request_path.endsWith(route.endswith) && route.id > current_id){
-					sys.puts("matched "+request_path+" to "+route.handler);
+					if (route.secure == true){
+						if (framework.require_secure(request,response)){ //we need to redirect to secure url
+							matched = true;
+							throw StopIteration;							
+						}
+
+					}
+					current_handler = route.handler;
 					that.call_handler(route.id,site,route.handler,request,response);
 					matched = true;
 					throw StopIteration; //break us out of the loop
 				}
 			});
 			if (matched == false){
-				sys.puts("####Hit 404####");
+				//sys.puts("####Hit 404####");
 				this.handle_404(request,response);
+			} else {
+				//response.end();
+				//sys.puts("hit bottom of router loop");
 			}
 		} catch (err) {
-			this.handle_error(request,response,err);
+			this.handle_error(request,response,err,current_handler);
 		}
 	},
 
-	handle_error: function(request,response,error){
-		response.writeHeader(500, {"Content-Type": "text/html"});
+	handle_error: function(request,response,error,handler){		
+		sys.puts("####### ERROR!! ###########");
+		sys.puts("Handler: "+handler);
+		sys.puts("Error: "+error);
+		sys.puts("###########################");
+		try {
+			response.writeHeader(500, {"Content-Type": "text/html"});
+		} catch (err) {
+
+		}
 		var template = process.cwd()+"/sites/"+request.site+"/www/views/500.html";
 		framework.parser.display_file(template,response);
 	},
@@ -197,7 +226,6 @@ router.prototype = {
 		//	if (site.domain == )
 		//}		
 		request.site = "default";
-		sys.puts(request.site);
 		framework.parser.set_root(process.cwd()+"/sites/"+request.site+"/www/");
 		var request_path = url.parse(request.url).pathname;
 		if (request_path == "/")
@@ -212,22 +240,22 @@ router.prototype = {
 		var handler = "";
 		var that = this;
 		//object loader
-			if (request_path.startsWith("/object/")){ //TODO:  fix query string handling
-				var obj = request_path.substring(8);
-				sys.puts(obj);
-			if (inArray(obj,framework.objects)){ //special handler for this in package/objects
-				this.get_object(obj,"post_id=1",request,response);
-			}
-			else {
-				framework.models[obj].find(url.parse(request.url,true).query.id).success(function(obje){
-					response.writeHead( 200 );
-        			response.write(JSON.stringify(obje));
-        			response.end();
-				});
-			}
-			return;
-		}
-		sys.puts(full_path);
+		//	if (request_path.startsWith("/object/")){ //TODO:  fix query string handling
+		//		var obj = request_path.substring(8);
+		//		sys.puts(obj);
+		//	if (inArray(obj,framework.objects)){ //special handler for this in package/objects
+		//		this.get_object(obj,"post_id=1",request,response);
+		//	}
+		//	else {
+		//		framework.models[obj].find(url.parse(request.url,true).query.id).success(function(obje){
+		//			response.writeHeader( 200 );
+        //			response.write(JSON.stringify(obje));
+        //			response.end();
+		//		});
+		//	}
+		//	return;
+		//}
+		//sys.puts(full_path);
 		fs.exists(full_path,function(exists){
 			if (exists){
 				that.handle_static(full_path,request,response);				  

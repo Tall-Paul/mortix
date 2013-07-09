@@ -1,0 +1,82 @@
+{{>static/includes/header.html}}
+	<script src="/js/openpgp/openpgp.min.js"></script>
+	<script src="/js/mortix.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#generate').click(function(){
+				var keys = openpgp.generate_key_pair(1, 2048, "test@mortix.co.uk", "This is a test key!");
+				alert("keys generated");
+			});
+
+			$('#send').click(function(){
+				alert("here");
+				mortix.set_private_key($('#private_key').val());								
+				mortix.set_server_public_key("-----BEGIN PGP PUBLIC KEY BLOCK-----\
+Version: GnuPG v2.0.20 (MingW32)\
+mQGNBFG02i4BDAC7WUxpPqb4Zn0IkPzU63V/teO2tmME0yaUpwOxClJ99zsuHfYd\
+nhkEsCHInmZ/MtmlSqU9KdkkWwTEKJuBoEY0exbrHKoT9zzPGu6pm+a9T7zZEpzq\
+kX5sgOEJOyho2h0I3eyPbf8adaVXDlzanfJU2j2Gp+xi0PtToln3K0kkVq7aM/A0\
+dBdS3ARtVDm487ZNZcoMLn4AMTWIQlFha30GcdqUw2t2csV/TLNzyOQfiwgSxBVv\
+RIsTpmhC5wuuj5AYfFH9wRJwAAlypgDXgOK+vxgKPe1r/gKw8RO36ySdFzEipGCM\
+CO4tvC6c+A/m/KXVkBeQd7oyXsxJK5DwLZ09k94jsksPdgvQcTTGcvg2Qh1AkKa5\
+r3Abn76uuge9rSIsejSDxi0KGtE0RdFqpOhz3pTGwzAKAvlKDFHPl5nKg8R/GLHB\
+XR9ks8cJ08/BovGlMfGjKLTZJaxp0NGL7Hx7AAXhF7AEGJDvMWuG5aZCCu9W0gy8\
+BtDUvZnT2DUMNNcAEQEAAbRBTW9ydGl4LmNvLnVrIChwcml2YXRlIGtleSBmb3Ig\
+bW9ydGl4IHNlcnZlcikgPGFkbWluQG1vcnRpeC5jby51az6JAbkEEwECACMFAlG0\
+2i4CGw8HCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRDQJAjTrh7Xy2PEC/4y\
+DqI0pvhNEnx/Afwlvd5RK42gIKVohsMv3WjQ/GXxOTxsCl+hb5fkpkd8/7/beeRZ\
+Uhqrydeb3HmEZrygUjusAppNy8PqFeT2g3wV0rHwjZGyIchbwCyNGdk54c6OY+Yl\
+I4BCBifG3ZdarRxNwCT0NXMOnzmvVfcQR2FUh+ThW6/w/7ReSIdAVdhHUlgvSbtD\
+nX0vyWmYx/GJ2J7rGBjbRLa9SknlOGSZa+EC/Jb9Az9qbD8EHIwyGRr0xhvfwjyJ\
+y0pdjO5uqCnVyq4f9qOrCr0Dj6f3bvh2XERuU7Xpy+JJvrvcl7b7tTUfT8XAWvsx\
+V2svG9pgZuA+emjb9bsbNshjIW8nVS3dAAz3uP5ve/1Zh92EpFmi5DA3r2QD9moR\
+tuWrBZwkzRPjPXJCv0BRx1+/MZ4yQW62UuVHeRjzteiwSc+TpfFCLn2E+mmKAOJo\
+ANU7/mK3oVH782IdBrn6RuYzdZQ8c0jX5kGLkqXmve+Vwgvh8WmWssKE3fP0mO0=\
+=OaSH\
+-----END PGP PUBLIC KEY BLOCK-----"
+);
+
+
+var Download = {
+    click : function(node) {
+        var ev = document.createEvent("MouseEvents");
+        ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        return node.dispatchEvent(ev);
+    },
+    encode : function(data) {
+            return 'data:application/octet-stream;base64,' + btoa( data );
+    },
+    link : function(data, name){
+        var a = document.createElement('a');
+        a.download = name || self.location.pathname.slice(self.location.pathname.lastIndexOf('/')+1);
+        a.href = data || self.location.href;
+        return a;
+    }
+};
+Download.save = function(data, name){
+    this.click(
+        this.link(
+            this.encode( data ),
+            name
+        )
+    );
+};
+
+				alert(mortix.private_key);
+			});
+		});
+	</script>
+	<div class="main">
+		<div class="main_index">
+			text:
+			<input type="text" id="text" /><br/>					
+			your private key:
+			<textarea id="private_key"></textarea><br/>
+			<button id="send">Send</button>
+			<button id="generate">Generate</button>
+			<button id="test">test</button>
+		</div>
+
+	</div>	
+
+{{>static/includes/footer.html}}

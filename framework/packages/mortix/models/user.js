@@ -1,14 +1,12 @@
 exports.definition = function(sequelize,Datatypes){
 	return sequelize.define("mortix_user", {
-    	username: Datatypes.STRING,
-    	password_hash: Datatypes.STRING,     	
-    	item_limit: Datatypes.INTEGER,
-    	expiry: Datatypes.DATE,
+    	public_key: Datatypes.TEXT,
+    	private_key: Datatypes.TEXT,
+    	username: Datatypes.STRING,    	    	
 	},
 	{
 		classMethods: {
-			get_description: function() { return "Mortix User Data"},
-			get_admin_fields: function() { return Array("id","username","expiry") }
+			
 		},
 		instanceMethods: {
 			

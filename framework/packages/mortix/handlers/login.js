@@ -33,7 +33,9 @@ passport.use(new LocalStrategy(
 ));
 
 exports.handle = function(id,site,request,response){
-		sys.puts(JSON.stringify(request.session));
+	if (framework.require_secure(request,response))
+		return true;
+		//sys.puts(JSON.stringify(request.session));
 		//sys.puts("login handler called");
 		//TODO: need some way of assigning variables before template functions run.
 		//framework.parser.assign("post_id","1");
@@ -64,7 +66,7 @@ exports.handle = function(id,site,request,response){
 						}						
 					})
 					(request,response,function(){
-							sys.puts("authentication callback");
+							//sys.puts("authentication callback");
 					});						
 				});
 		} else {

@@ -123,19 +123,19 @@ html, body {
 }
 
  .form_row{
- 	width:300px;
+ 	width:550px;
  	padding: 15px; 	
  	margin-left:auto;
  	margin-right:auto;
  }
 
  .form_label_container{ 	
- 	width:100px;
+ 	width:150px;
  	float:left;
  }
 
  .form_input_container{
- 	float:right;
+ 	float:left;
  }
 
 .main_index{
@@ -160,6 +160,62 @@ html, body {
  	float: left;
  }
 
+ .key{
+ 	width: 525px;
+ 	height: 400px; 
+ }
+
+ .message{
+ 	width: 525px;
+ 	height: 200px; 
+ }
+
+ #send_container{
+ 	left: 0px;
+ 	width: 550px;
+ 	padding: 5px;
+ 	padding-bottom:20px;
+ }
+
+ #inbox_container{ 		
+ 	padding: 5px;
+ 	width: 850px;
+ 	margin-left: auto;
+ 	margin-right: auto;
+ }
+ #read_container{
+ 	left: 0px;
+ 	width: 550px;
+ 	padding: 5px;
+ 	padding-bottom:20px;
+ }
+
+
+ #inbox_table{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	width: 100%;
+	border-collapse: collapse;
+	text-align: left;
+	margin: 20px;	
+}
+
+#inbox_table td, #inbox_tables th{
+	padding: 10px;
+}
+
+#inbox_table thead th {
+	border-bottom: 2px solid #C3D9FF;
+}
+
+#inbox_table td{
+	border-bottom: 1px solid #C3D9FF;
+}
+
+#inbox_table tr:hover td{
+	background-color:#FFFF88;
+}
 
 
 

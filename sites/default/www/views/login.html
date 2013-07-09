@@ -1,33 +1,104 @@
 {{>static/includes/header.html}}
+    <pre id="public_key_pre" style="display:none">
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: OpenPGP.js v.1.20130420
+Comment: http://openpgpjs.org
+
+xsBNBFG53zABCADZsVmqDmxMXmyBoI/ekRC+93e912fPRxWiHNyGiE5inpJb
+VfTNwy0gvMN7zrqLqczd06gUMpP18M4hGc6qYz35srTh9rGsQcZsr23IvbjY
+KSHOyU7xN2iRDVEmI2pu5LgU0F+KZKr16/x68oxFDGOcxMFO8fnvT/Jx1MVH
+zc+39yEJ5w+pryatloMhZ+T7zVvf/p6jw5uCNlqkaAU5Fwtz001HWm/4QdIz
+FrG1piLe0xbf8qr0VTYI9UJ3SeXwIZKugOXXhCoxo+j+yweUdIRQJlDpLj3m
+/+zDaebPf93B1CCSHsDeQOs/fY2T0wiuJFprplwUiazqpaD6tYoC2jkTABEB
+AAHNE3NlcnZlckBtb3J0aXguY28udWvCwFwEEAEIABAFAlG53z0JEHSQLmvz
+i42zAADNpwgA17MCJmTQHs2c+PiVTjRpjyA7Nih0/sJOOBYoYEOPJWgbBbGT
+eojlJ1Bm8uN40SkYhSE0Sp8/0iA5anMezfjkIXwrrGJxNclWRI9qRiPv/EXv
+A2Ho44pOOKoO4s398uDjixjKGHH7LzH/lH6f3U6fESMrASNqLZXqWg/FWbdD
+LdxkmQ2FeTSu1FtFq9vvO6rZZeedUe757INiJehOixXxes3fBc6svWJaSf3Z
+zw3WNJUOwfnuFTXboWodjhMYP7CI9bN2nHAxJNQV7vpdEoy/svi/lZLES/iV
+WxZMZFfF00Gb1AZMjslBw3QsBsrJ06SQaZ2pcbsIBWj/H6iP5bQgHw==
+=83Ws
+-----END PGP PUBLIC KEY BLOCK-----
+    </pre>
+    <script src="/js/openpgp.min.js"></script>
+    <script src="/js/mortix.js"></script>
+    <script src="/js/login.js"></script>
 	<div class="main">
 		<div class="login_main">
 			<div class="login_message">
-				<h2>Please login to access your account</h2>
-				
+				<h2 id="login_message">Please login to access your account</h2>				
 			</div>
 			<div class="login_form">
-				<form  method="post">
-    				<div class="form_row">
+					<div class="form_row" id="username_row">
     					<div class="form_label_container">
         					<label class="form_label">Username:</label>
         				</div>
         				<div class="form_input_container">
-        					<input type="text" name="username"/>
+        					<input type="text" name="username" id="username"/>
         				</div>
     				</div>
     				<div class="form_row">
-    					<div class="form_label_container">
-        					<label class="form_label">Password:</label>
-        				</div>
-        				<div class="form_input_container">
-        					<input type="password" name="password"/>
-        				</div>		
+                        <div class="form_label_container">
+                            <label class="form_label">PassPhrase:</label>
+                        </div>
+                        <div class="form_input_container">
+                            <input type="password" id="passphrase"/>
+                        </div>      
+                    </div>                     
+    				<div class="form_row" id="login_row">
+                        <button id="login">Log In</button> or <a href="/register.html">Register</a>
     				</div>
-    				<div class="form_row">
-        				<input type="submit" value="Log In"/> or <a href="/register.html">Register</a>
-    				</div>
-				</form>                
+                    <div class="form_row" id="unlock_row" style="display:none">
+                        <button id="unlock">Unlock</button> or <button id="logout">Logout</button>
+                    </div>
+
 			</div>
 		</div>
+
+        <div id="messaging_main" style="display:none">
+           
+            <div id="inbox_container">
+                <h2>Inbox</h2><button id="refresh_messages">refresh</button>&nbsp;<button id="new_message">New</button>
+                <table id="inbox_table">
+                    <thead>
+                        <tr>
+                            <th>#</th><th>From</th><th>Metadata</th><th>Sent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inbox">
+                    </tbody>
+                </table>
+            </div>
+            
+
+            <div id="read_container" style="display:none">
+                <textarea id="preview" class="message"></textarea>
+            </div>
+
+
+             <div id="send_container" style="display:none">
+                    <div class="form_row">
+                        <div class="form_label_container">
+                            <label class="form_label">Recipient:</label>
+                        </div>
+                        <div class="form_input_container">
+                            <input type="text"  id="recipient"/>
+                        </div>
+                    </div>
+                    <div class="form_row">
+                        <div class="form_label_container">
+                            <label class="form_label">Message:</label>
+                        </div>
+                        <div class="form_input_container">
+                            <textarea id="message" class="message"></textarea>
+                        </div>
+                    </div>  
+                    <div class="form_row" id="send_row">
+                        <button id="send">Send</button>
+                    </div>
+                </div>
+
+
+        </div>
 	</div>
 {{>static/includes/footer.html}}
